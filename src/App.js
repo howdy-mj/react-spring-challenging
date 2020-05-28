@@ -19,10 +19,14 @@ const App = () => {
   }, [])
   useEffect (() => void reset(), [reset]);
 
-  const move = true;
+
   const arrowProps = useSpring({
-    from: { transform: move ? "translate(0, 10px)" : "" }, 
-    to: { transform: move ? "translate(0, 0px)" : ""},
+    from: { transform: "translate(0, 10px)" }, 
+    to: async next => { 
+      // while(1) {
+        await next({transform: "translate(0, 0px)"})
+      // }
+    },
   })
 
   return (
