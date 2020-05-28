@@ -1,22 +1,30 @@
 /** @jsx jsx */
-// import React from 'react';
+import { useRef } from 'react';
 import { jsx, css } from "@emotion/core";
-import Video from "./video/samulnori.mp4";
+import Video from "./video/macbookAir.mp4";
 import { useSpring, animated, useChain } from "react-spring";
 
 const App = () => {
+  const videoRef = useRef();
+  const titleProps = useSpring({ from: {opacity: 0}, to: {opacity: 1}})
+  const arrowProps = useSpring({from: {opacity: 0}, to: {opacity: 1}, delay: 2000})
+  
+  const imgRef = useRef();
+
+  useChain([videoRef, imgRef]);
+
   return (
     <div css={wrap}>
       <div css={card}>
-        <div css={title}>
-          <p>김덕수</p><p>사물놀이</p>
-        </div>
+        <animated.div css={title} style={titleProps}>
+          <p>MacBook</p><p>Air 2020</p>
+        </animated.div>
         <div css={videoCon}>
           <video css={video} autostart autoPlay src={Video} type="video/mp4" />
           <span css={videoCorner}></span>
         </div>
         <div css={arrow}>
-          <i class="fas fa-arrow-up" style={{color: "white"}}></i>
+          <animated.i class="fas fa-arrow-up" style={arrowProps}></animated.i>
         </div>
 
         {/* <span css={corner}></span> */}
@@ -41,7 +49,6 @@ const card = css`
 `;
 
 const title = css`
-  color: white;
   font-weight: 700;
   position: absolute;
   top: 70px;
@@ -66,7 +73,7 @@ const video = css`
 const videoCorner = css`
   position: absolute;
   border-style:solid;
-  bottom:0;
+  bottom: 3px;
   right: 0;
   border-width: 50px 50px 0 0;
   border-color: yellowgreen green green green;
@@ -75,6 +82,7 @@ const videoCorner = css`
 
 const arrow = css`
   padding-top: 50px;
+  color: white;
 `;
 
 const corner = css`
