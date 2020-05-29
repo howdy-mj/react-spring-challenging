@@ -6,12 +6,22 @@ import img from "./potato.png";
 import { useSpring, useTrail, animated, useChain } from "react-spring";
 
 const App = () => {
-  const [firstPage, setfirstPage] = useState(true);
-
+  const [firstPage, setFirstPage] = useState(true);
+  // const interval = useRef(0)
   // useEffect(() => {
-  //   const interval = setInterval(() => setfirstPage(!firstPage), 2000);
-  //   return () => clearInterval(interval);
-  // }, [firstPage]);
+  //   interval.current = setInterval( () => { 
+  //     setFirstPage(firstPage => !firstPage) 
+  //   }, 4000);
+  //   console.log('current firstPage: ', firstPage)
+  //   return () => {clearInterval(interval.current)};
+  // }, [interval.current]);
+  // console.log(interval.current)
+
+  let a = 'a';
+  useEffect(() => {
+    const id = setInterval( () => console.log(a), 1000);
+    return () => { clearInterval(id) };
+  }, [])
 
   // 첫번째 페이지
   // title
@@ -40,12 +50,14 @@ const App = () => {
 
   // 두번째 페이지
   // rollingup 초록배경, 모서리
+  const rollingRef = useRef();
   const {h, bw, bs} = useSpring({
     from: { h: 430, bw: 0, bs: "none"},
     to: async next => { 
       await next ({h: 400})
       await next ({bw: 50, bs: "solid"})
     },
+    ref: rollingRef,
   })
   
   // 제목
@@ -80,6 +92,7 @@ const App = () => {
     from: { transform: 'translate(0, -10px)', visibility : "hidden"},
     to: { transform: 'translate(0, 0px)', visibility : "visible"},
     ref: secondTextSecondRef,
+    config: { tension: 500 },
   })
   const secondTextThirdRef = useRef();
   const secondTextThird = useSpring({
@@ -94,11 +107,14 @@ const App = () => {
     ref: secondTextForthRef,
   })
 
-  useChain([firstTitleTopRef, firstTitleBottomRef, secondTitleTopRef, secondTitleBottomRef, secondEqualRef, secondTextFirstRef, secondTextSecondRef, secondTextThirdRef, secondTextForthRef ])
+  useChain([firstTitleTopRef, firstTitleBottomRef, rollingRef, secondTitleTopRef, secondTitleBottomRef, secondEqualRef, secondTextFirstRef, secondTextSecondRef, secondTextThirdRef, secondTextForthRef ])
 
 
   return (
     <div css={wrap}>
+ 
+        <div>
+        {/* 첫번째 */}
         <div css={card}>
           <div css={title}>
             <animated.div style={firstTitleTop}>Honeykki</animated.div>
@@ -112,7 +128,10 @@ const App = () => {
             <animated.i className="fas fa-arrow-up" style={arrowProps}></animated.i>
           </div>
         </div>
+        </div>
 
+        <div>
+        {/* 두번째 */}
         <div css={cardLight}>
           <animated.div css={cardLightWrap} style={{height: h.interpolate( h => `${h}px`)}}>
           <animated.span 
@@ -129,7 +148,7 @@ const App = () => {
                 <animated.div style={secondTitleTop}>오늘의</animated.div>
                 <animated.div style={secondTitleBottom}>메뉴</animated.div>
               </div>
-              <animated.div style={secondEqual}>
+              <animated.div css={arrowDiv} style={secondEqual}>
                 <i className="fas fa-equals" style={{color: "white", fontSize: "8px"}} />
               </animated.div>
               <div style={{fontSize: "12px"}}>
@@ -138,14 +157,22 @@ const App = () => {
                 <animated.div style={secondTextThird}>샐러드</animated.div>
                 <animated.div style={secondTextForth}>밀크티</animated.div>
               </div>
-            </div>
+
+              </div>
           </div>
           <img src={img} alt="" css={imgCss} />
           </animated.div>
         </div>
+        </div>
     </div>
   );
 }
+
+const arrowDiv = css`
+height: 30px;
+width: 30px;
+backgroudn-color: gray;
+`;
 
 const wrap = css`
   width: 100%;
