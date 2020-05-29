@@ -24,7 +24,8 @@ const App = () => {
     from: { transform: "translate(0, 10px)" }, 
     to: async next => { 
       // while(1) {
-        await next({transform: "translate(0, 0px)"})
+        await next({transform: "translate(0, 0px)"});
+        await next({transform: "translate(0, 10px)"})
       // }
     },
   })
