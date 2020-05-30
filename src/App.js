@@ -1,41 +1,25 @@
 /** @jsx jsx */
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { jsx, css } from "@emotion/core";
 import Video from "./video/honeykki.mp4";
 import img from "./potato.png";
-import { useSpring, useTrail, animated, useChain } from "react-spring";
+import { useSpring, animated, useChain } from "react-spring";
 
 const App = () => {
-  const [firstPage, setFirstPage] = useState(true);
-  // const interval = useRef(0)
-  // useEffect(() => {
-  //   interval.current = setInterval( () => { 
-  //     setFirstPage(firstPage => !firstPage) 
-  //   }, 4000);
-  //   console.log('current firstPage: ', firstPage)
-  //   return () => {clearInterval(interval.current)};
-  // }, [interval.current]);
-  // console.log(interval.current)
-
-  // let a = 'a';
-  // useEffect(() => {
-  //   const id = setInterval( () => console.log(a), 1000);
-  //   return () => { clearInterval(id) };
-  // }, [])
 
   // 첫번째 페이지
   // title
   const firstTitleTopRef = useRef();
   const firstTitleTop = useSpring({
-    from: { transform: 'translate(0, -10px'},
-    to: { transform: 'translate(0, 0px'},
+    from: { transform: 'translate(0, -10px)'},
+    to: { transform: 'translate(0, 0px)'},
     config: { duration: 300 },
     ref: firstTitleTopRef,
   })
   const firstTitleBottomRef = useRef();
   const firstTitleBottom = useSpring({
-    from: { transform: 'translate(0, -10px', visibility : "hidden"},
-    to: { transform: 'translate(0, 0px', visibility : "visible"},
+    from: { transform: 'translate(0, -10px)'},
+    to: { transform: 'translate(0, 0px)'},
     config: { duration: 300 },
     ref: firstTitleBottomRef,
   })
@@ -60,6 +44,7 @@ const App = () => {
       await next ({h: 400})
       await next ({bw: 50, bs: "solid"})
     },
+    config: { duration: 300 },
     ref: rollingRef,
   })
   
@@ -89,7 +74,7 @@ const App = () => {
     config: { duration: 300 },
     ref: secondEqualRef,
   })
-  // 메뉴
+  // 메뉴 두번째 ~
   const secondTextRef = useRef();
   const { t2, v2, t3, v3, t4, v4 } = useSpring({
     from: { t2: -10, v2: "hidden", t3: -10, v3: "hidden", t4: -10, v4: "hidden" },
@@ -102,22 +87,44 @@ const App = () => {
     ref: secondTextRef,
   })
 
+  const changeToSecondPageRef = useRef();
+  const { sfo, sso } = useSpring({
+    from: { sfo: "visible", sso: "hidden"},
+    to: {sfo: "hidden", sso: "visible"},
+    delay: 3500,
+    ref: changeToSecondPageRef,
+  })
+
+  const changeToFirstPageRef = useRef();
+  const { ffo, fso } = useSpring({
+    from: { ffo: "hidden", fso: "visible"},
+    to: { ffo: "visible", fso: "hidden"},
+    delay: 3500,
+    ref: changeToFirstPageRef,
+  })
+
   useChain([
     firstTitleTopRef, 
     firstTitleBottomRef, 
+    changeToSecondPageRef,
     rollingRef, 
     secondTitleTopRef, 
     secondTitleBottomRef, 
     secondEqualRef, 
-    secondTextRef 
+    secondTextRef,
+    changeToFirstPageRef,
   ])
 
   return (
     <div css={wrap}>
- 
-        <div>
-        {/* 첫번째 */}
-        <div css={card}>
+      {/* 첫번째 */}
+      <div css={pageContainer}>
+        <animated.div 
+          css={card} 
+          style={{
+            visibility: sfo.interpolate( sfo => `${sfo}`),
+          }}
+        >
           <div css={title}>
             <animated.div style={firstTitleTop}>Honeykki</animated.div>
             <animated.div style={firstTitleBottom}>먹방 일기</animated.div>
@@ -129,97 +136,91 @@ const App = () => {
           <div css={arrow}>
             <animated.i className="fas fa-arrow-up" style={arrowProps}></animated.i>
           </div>
-        </div>
-        </div>
-
-        <div>
-        {/* 두번째 */}
-        <div css={cardLight}>
-          <animated.div css={cardLightWrap} style={{height: h.interpolate( h => `${h}px`)}}>
-          <animated.span 
-            css={corner} 
-            style={{
-              borderWidth: bw.interpolate( bw => `${bw}px ${bw}px 0 0` ), 
-              borderStyle: bs.interpolate( bs => `${bs}`),
-            }}
+        </animated.div>
+      </div>
+      {/* 두번째 */}
+      <div css={pageContainer}>
+        <animated.div 
+            css={cardLight}
+            style={{visibility: sso.interpolate( sso => `${sso}`)}}
           >
-          </animated.span>
-          <div css={left}>
-            <div style={{paddingTop: "50px", paddingLeft: "20px"}}>
-              <div style={{fontSize: "24px"}}>
-                <animated.div style={secondTitleTop}>오늘의</animated.div>
-                <animated.div style={secondTitleBottom}>메뉴</animated.div>
-              </div>
-              <animated.div 
-                css={arrowDiv} 
-                style={{ 
-                  height: div.interpolate ( div => `${div}px`),
-                  width: div.interpolate ( div => `${div}px`),
-                }}
-              >
-                <animated.i 
-                  className="fas fa-equals" 
-                  style={{
-                    color: "white", 
-                    fontSize: "8px",
-                    visibility: v.interpolate(v => `${v}`),
-                    transform: r.interpolate(r => `rotate(${r}deg)`)
-                  }} 
-                />
-              </animated.div>
-              <div style={{fontSize: "12px"}}>
+            <animated.div css={cardLightWrap} style={{height: h.interpolate( h => `${h}px`)}}>
+            <animated.span 
+              css={corner} 
+              style={{
+                borderWidth: bw.interpolate( bw => `${bw}px ${bw}px 0 0` ), 
+                borderStyle: bs.interpolate( bs => `${bs}`),
+              }}
+            >
+            </animated.span>
+            <div css={left}>
+              <div style={{paddingTop: "50px", paddingLeft: "20px"}}>
+                <div style={{fontSize: "24px"}}>
+                  <animated.div style={secondTitleTop}>오늘의</animated.div>
+                  <animated.div style={secondTitleBottom}>메뉴</animated.div>
+                </div>
                 <animated.div 
-                  style={{
-                    transform: tf.interpolate(tf => `translate(0, ${tf}px)`),
-                    visibility: v.interpolate(v => `${v}`),
+                  css={arrowDiv} 
+                  style={{ 
+                    height: div.interpolate ( div => `${div}px`),
+                    width: div.interpolate ( div => `${div}px`),
                   }}
-                >햄버거</animated.div>
-                <animated.div 
-                  style={{
-                    transform: t2.interpolate(t2 => `translate(0, ${t2}px)`),
-                    visibility: v2.interpolate(v2 => `${v2}`),
-                  }}
-                >피자</animated.div>
-                <animated.div 
-                  style={{
-                    transform: t3.interpolate(t3 => `translate(0, ${t3}px)`),
-                    visibility: v3.interpolate(v3 => `${v3}`),
-                  }}
-                >샐러드</animated.div>
-                <animated.div 
-                  style={{
-                    transform: t4.interpolate(t4 => `translate(0, ${t4}px)`),
-                    visibility: v4.interpolate(v4 => `${v4}`),
-                  }}
-                >밀크티</animated.div>
-              </div>
+                >
+                  <animated.i 
+                    className="fas fa-equals" 
+                    style={{
+                      color: "white", 
+                      fontSize: "8px",
+                      visibility: v.interpolate(v => `${v}`),
+                      transform: r.interpolate(r => `rotate(${r}deg)`)
+                    }} 
+                  />
+                </animated.div>
+                <div style={{fontSize: "12px"}}>
+                  <animated.div 
+                    style={{
+                      transform: tf.interpolate(tf => `translate(0, ${tf}px)`),
+                      visibility: v.interpolate(v => `${v}`),
+                    }}
+                  >햄버거</animated.div>
+                  <animated.div 
+                    style={{
+                      transform: t2.interpolate(t2 => `translate(0, ${t2}px)`),
+                      visibility: v2.interpolate(v2 => `${v2}`),
+                    }}
+                  >피자</animated.div>
+                  <animated.div 
+                    style={{
+                      transform: t3.interpolate(t3 => `translate(0, ${t3}px)`),
+                      visibility: v3.interpolate(v3 => `${v3}`),
+                    }}
+                  >샐러드</animated.div>
+                  <animated.div 
+                    style={{
+                      transform: t4.interpolate(t4 => `translate(0, ${t4}px)`),
+                      visibility: v4.interpolate(v4 => `${v4}`),
+                    }}
+                  >밀크티</animated.div>
+                </div>
 
-              </div>
-          </div>
-          <img src={img} alt="" css={imgCss} />
+                </div>
+            </div>
+            <img src={img} alt="" css={imgCss} />
+            </animated.div>
           </animated.div>
-        </div>
         </div>
     </div>
   );
 }
 
-const arrowDiv = css`
-  height: 30px;
-  width: 30px;
-  background-color: gray;
-  text-align: center;
-  border-radius: 20px;
-  margin: 15px 0;
+
+const pageContainer = css`
+  position: absolute;
+  top: 20%;
+  left: 40%;
 `;
 
-const wrap = css`
-  width: 100%;
-  text-align: center;
-  // display: flex;
-`;
 const card = css`
-  margin: 100px auto;
   width: 300px;
   height: 500px;
   background-color: green;
@@ -260,22 +261,15 @@ const videoCorner = css`
   border-color: yellowgreen green green green;
 `;
 
-const arrow = css`
-  padding-top: 20px;
-  color: white;
-`;
-
-const corner = css`
-  position: absolute;
+const wrap = css`
+  width: 100%;
+  text-align: center;
+  // display: flex;
+  margin: 100px auto;
   
-  bottom:0;
-  right: 0;
-  /* border-width: 50px 50px 0 0; */
-  border-color: yellowgreen lightgreen lightgreen lightgreen;
 `;
 
 const cardLight = css`
-margin: 100px auto;
   width: 300px;
   height: 500px;
   position: relative;
@@ -291,8 +285,29 @@ const cardLightWrap = css`
   position: relative;
 `;
 
+const corner = css`
+  position: absolute;
+  bottom:0;
+  right: 0;
+  border-color: yellowgreen lightgreen lightgreen lightgreen;
+`;
+
 const left = css`
   text-align: left;
+  color: white;
+`;
+
+const arrowDiv = css`
+  height: 30px;
+  width: 30px;
+  background-color: gray;
+  text-align: center;
+  border-radius: 20px;
+  margin: 15px 0;
+`;
+
+const arrow = css`
+  padding-top: 20px;
   color: white;
 `;
 
