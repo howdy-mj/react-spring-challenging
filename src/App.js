@@ -17,11 +17,11 @@ const App = () => {
   // }, [interval.current]);
   // console.log(interval.current)
 
-  let a = 'a';
-  useEffect(() => {
-    const id = setInterval( () => console.log(a), 1000);
-    return () => { clearInterval(id) };
-  }, [])
+  // let a = 'a';
+  // useEffect(() => {
+  //   const id = setInterval( () => console.log(a), 1000);
+  //   return () => { clearInterval(id) };
+  // }, [])
 
   // 첫번째 페이지
   // title
@@ -29,12 +29,14 @@ const App = () => {
   const firstTitleTop = useSpring({
     from: { transform: 'translate(0, -10px'},
     to: { transform: 'translate(0, 0px'},
+    config: { duration: 300 },
     ref: firstTitleTopRef,
   })
   const firstTitleBottomRef = useRef();
   const firstTitleBottom = useSpring({
     from: { transform: 'translate(0, -10px', visibility : "hidden"},
     to: { transform: 'translate(0, 0px', visibility : "visible"},
+    config: { duration: 300 },
     ref: firstTitleBottomRef,
   })
   // arrow
@@ -46,6 +48,7 @@ const App = () => {
         await next({transform: "translate(0, 10px)"})
       }
     },
+    config: { duration: 400 },
   })
 
   // 두번째 페이지
@@ -65,50 +68,49 @@ const App = () => {
   const secondTitleTop = useSpring({
     from: { transform: 'translate(0, -10px)', visibility : "hidden"},
     to: { transform: 'translate(0, 0px)', visibility : "visible"},
+    config: { duration: 200 },
     ref: secondTitleTopRef,
   })
   const secondTitleBottomRef = useRef();
   const secondTitleBottom = useSpring({
     from: { transform: 'translate(0, -10px)', visibility : "hidden"},
     to: { transform: 'translate(0, 0px)', visibility : "visible"},
+    config: { duration: 200 },
     ref: secondTitleBottomRef,
   })
-  // =
+  // =, 메뉴 첫번째
   const secondEqualRef = useRef();
-  const secondEqual = useSpring({
-    from: { transform: 'translate(0, -10px)', visibility : "hidden"},
-    to: { transform: 'translate(0, 0px)', visibility : "visible"},
+  const { div, v, r, tf, } = useSpring({
+    from: { div: 0, v: "hidden", r: -30, tf: -10, },
+    to: async next => {
+      await next ({ div: 30 })
+      await next ({ v: "visible", r: 0, tf: 0 })
+    },
+    config: { duration: 300 },
     ref: secondEqualRef,
   })
   // 메뉴
-  const secondTextFirstRef = useRef();
-  const secondTextFirst = useSpring({
-    from: { transform: 'translate(0, -10px)', visibility : "hidden"},
-    to: { transform: 'translate(0, 0px)', visibility : "visible"},
-    ref: secondTextFirstRef,
-  })
-  const secondTextSecondRef = useRef();
-  const secondTextSecond = useSpring({
-    from: { transform: 'translate(0, -10px)', visibility : "hidden"},
-    to: { transform: 'translate(0, 0px)', visibility : "visible"},
-    ref: secondTextSecondRef,
-    config: { tension: 500 },
-  })
-  const secondTextThirdRef = useRef();
-  const secondTextThird = useSpring({
-    from: { transform: 'translate(0, -10px)', visibility : "hidden"},
-    to: { transform: 'translate(0, 0px)', visibility : "visible"},
-    ref: secondTextThirdRef,
-  })
-  const secondTextForthRef = useRef();
-  const secondTextForth = useSpring({
-    from: { transform: 'translate(0, -10px)', visibility : "hidden"},
-    to: { transform: 'translate(0, 0px)', visibility : "visible"},
-    ref: secondTextForthRef,
+  const secondTextRef = useRef();
+  const { t2, v2, t3, v3, t4, v4 } = useSpring({
+    from: { t2: -10, v2: "hidden", t3: -10, v3: "hidden", t4: -10, v4: "hidden" },
+    to: async next => {
+      await next ({ t2: 0, v2: "visible"})
+      await next ({ t3: 0, v3: "visible"})
+      await next ({ t4: 0, v4: "visible"})
+    },
+    config: { duration: 100 },
+    ref: secondTextRef,
   })
 
-  useChain([firstTitleTopRef, firstTitleBottomRef, rollingRef, secondTitleTopRef, secondTitleBottomRef, secondEqualRef, secondTextFirstRef, secondTextSecondRef, secondTextThirdRef, secondTextForthRef ])
-
+  useChain([
+    firstTitleTopRef, 
+    firstTitleBottomRef, 
+    rollingRef, 
+    secondTitleTopRef, 
+    secondTitleBottomRef, 
+    secondEqualRef, 
+    secondTextRef 
+  ])
 
   return (
     <div css={wrap}>
@@ -138,7 +140,7 @@ const App = () => {
             css={corner} 
             style={{
               borderWidth: bw.interpolate( bw => `${bw}px ${bw}px 0 0` ), 
-              borderStyle: bs.interpolate( bs => `${bs}`)
+              borderStyle: bs.interpolate( bs => `${bs}`),
             }}
           >
           </animated.span>
@@ -148,14 +150,48 @@ const App = () => {
                 <animated.div style={secondTitleTop}>오늘의</animated.div>
                 <animated.div style={secondTitleBottom}>메뉴</animated.div>
               </div>
-              <animated.div css={arrowDiv} style={secondEqual}>
-                <i className="fas fa-equals" style={{color: "white", fontSize: "8px"}} />
+              <animated.div 
+                css={arrowDiv} 
+                style={{ 
+                  height: div.interpolate ( div => `${div}px`),
+                  width: div.interpolate ( div => `${div}px`),
+                }}
+              >
+                <animated.i 
+                  className="fas fa-equals" 
+                  style={{
+                    color: "white", 
+                    fontSize: "8px",
+                    visibility: v.interpolate(v => `${v}`),
+                    transform: r.interpolate(r => `rotate(${r}deg)`)
+                  }} 
+                />
               </animated.div>
               <div style={{fontSize: "12px"}}>
-                <animated.div style={secondTextFirst}>햄버거</animated.div>
-                <animated.div style={secondTextSecond}>피자</animated.div>
-                <animated.div style={secondTextThird}>샐러드</animated.div>
-                <animated.div style={secondTextForth}>밀크티</animated.div>
+                <animated.div 
+                  style={{
+                    transform: tf.interpolate(tf => `translate(0, ${tf}px)`),
+                    visibility: v.interpolate(v => `${v}`),
+                  }}
+                >햄버거</animated.div>
+                <animated.div 
+                  style={{
+                    transform: t2.interpolate(t2 => `translate(0, ${t2}px)`),
+                    visibility: v2.interpolate(v2 => `${v2}`),
+                  }}
+                >피자</animated.div>
+                <animated.div 
+                  style={{
+                    transform: t3.interpolate(t3 => `translate(0, ${t3}px)`),
+                    visibility: v3.interpolate(v3 => `${v3}`),
+                  }}
+                >샐러드</animated.div>
+                <animated.div 
+                  style={{
+                    transform: t4.interpolate(t4 => `translate(0, ${t4}px)`),
+                    visibility: v4.interpolate(v4 => `${v4}`),
+                  }}
+                >밀크티</animated.div>
               </div>
 
               </div>
@@ -169,9 +205,12 @@ const App = () => {
 }
 
 const arrowDiv = css`
-height: 30px;
-width: 30px;
-backgroudn-color: gray;
+  height: 30px;
+  width: 30px;
+  background-color: gray;
+  text-align: center;
+  border-radius: 20px;
+  margin: 15px 0;
 `;
 
 const wrap = css`
