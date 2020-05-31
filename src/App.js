@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRef } from 'react';
 import { jsx, css } from "@emotion/core";
 import Video from "./video/honeykki.mp4";
 import img from "./potato.png";
@@ -87,6 +87,7 @@ const App = () => {
     ref: secondTextRef,
   })
 
+  // 첫번째 페이지에서 두번째 페이지로 넘어가기
   const changeToSecondPageRef = useRef();
   const { sfo, sso } = useSpring({
     from: { sfo: "visible", sso: "hidden"},
@@ -95,6 +96,7 @@ const App = () => {
     ref: changeToSecondPageRef,
   })
 
+  // 두번째 페이지에서 첫번째 페이지로 넘어가기..
   const changeToFirstPageRef = useRef();
   const { ffo, fso } = useSpring({
     from: { ffo: "hidden", fso: "visible"},
