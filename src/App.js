@@ -1,12 +1,11 @@
 /** @jsx jsx */
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { jsx, css } from "@emotion/core";
 import Video from "./video/honeykki.mp4";
 import img from "./potato.png";
 import { useSpring, animated, useChain } from "react-spring";
 
 const App = () => {
-
   // 첫번째 페이지
   // title
   const firstTitleTopRef = useRef();
@@ -24,17 +23,29 @@ const App = () => {
     ref: firstTitleBottomRef,
   })
   // arrow
+  // const arrowProps = useSpring({
+  //   from: { transform: "translate(0, 10px)" }, 
+  //   to: async next => { 
+  //     while(1) {
+  //       await next({transform: "translate(0, 0px)"});
+  //       await next({transform: "translate(0, 10px)"})
+  //     }
+  //   },
+  //   config: { duration: 400 },
+  // })
+
   const arrowProps = useSpring({
     from: { transform: "translate(0, 10px)" }, 
     to: async next => { 
-      while(1) {
+      {
         await next({transform: "translate(0, 0px)"});
         await next({transform: "translate(0, 10px)"})
       }
     },
-    config: { duration: 400 },
+    loop: true,
+    config: { duration: 500 },
   })
-
+ 
   // 두번째 페이지
   // rollingup 초록배경, 모서리
   const rollingRef = useRef();
@@ -92,7 +103,7 @@ const App = () => {
   const { sfo, sso } = useSpring({
     from: { sfo: "visible", sso: "hidden"},
     to: {sfo: "hidden", sso: "visible"},
-    delay: 3500,
+    delay: 3000,
     ref: changeToSecondPageRef,
   })
 
@@ -114,7 +125,7 @@ const App = () => {
     secondTitleBottomRef, 
     secondEqualRef, 
     secondTextRef,
-    changeToFirstPageRef,
+    // changeToFirstPageRef,
   ])
 
   return (
@@ -123,9 +134,7 @@ const App = () => {
       <div css={pageContainer}>
         <animated.div 
           css={card} 
-          style={{
-            visibility: sfo.interpolate( sfo => `${sfo}`),
-          }}
+          style={{ visibility: sfo.interpolate( sfo => `${sfo}`), }}
         >
           <div css={title}>
             <animated.div style={firstTitleTop}>Honeykki</animated.div>
@@ -300,8 +309,6 @@ const left = css`
 `;
 
 const arrowDiv = css`
-  height: 30px;
-  width: 30px;
   background-color: gray;
   text-align: center;
   border-radius: 20px;
@@ -309,7 +316,7 @@ const arrowDiv = css`
 `;
 
 const arrow = css`
-  padding-top: 20px;
+  padding-top: 23px;
   color: white;
 `;
 
